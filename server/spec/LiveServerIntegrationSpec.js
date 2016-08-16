@@ -54,15 +54,22 @@ describe('server', function() {
         username: 'Jono',
         message: 'Do my bidding!'}
     };
+    var requestParams2 = {method: 'GET',
+      uri: 'http://127.0.0.1:3000/classes/messages'
+    };
 
     request(requestParams, function(error, response, body) {
       // Now if we request the log, that message we posted should be there:
+      var body2;
+      // console.log(body);
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+        // body2 = error;
         var messages = JSON.parse(body).results;
         expect(messages[0].username).to.equal('Jono');
         expect(messages[0].message).to.equal('Do my bidding!');
         done();
       });
+      // console.log(body2);
     });
   });
 
