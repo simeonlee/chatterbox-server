@@ -11,20 +11,20 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var dispatcher = require('httpdispatcher');
-var request = require('request');
+//var dispatcher = require('httpdispatcher');
+//var request = require('request');
 
 var requestHandler = function(request, response) {
 
-  try {
-    //log the request on console
-    console.log(request.url);
-    //Disptach
-    dispatcher.dispatch(request, response);
-  } catch (err) {
-    console.log(err);
-  }
-
+  // try {
+  //   //log the request on console
+  //   console.log(request.url);
+  //   //Disptach
+  //   dispatcher.dispatch(request, response);
+  // } catch (err) {
+  //   console.log(err);
+  // }
+//https://blog.kevinchisholm.com/javascript/node-js/making-a-simple-http-server-with-node-js-part-i/
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -75,29 +75,88 @@ var requestHandler = function(request, response) {
   //response.end('Hello, World!');
 
   if (request.method === 'GET' && request.url === '/classes/messages') {
+    console.log(request);
     var headers = request.headers;
     var method = request.method;
     var url = request.url;
     var results = [];
-    request.on('data', function(data) {
-      console.log(data);
-      results.push(data);
+
+    //tuesday
+
+    request.on('error', function(err) {
+      console.error(err);
+    }).on('data', function(chunk) {
+      results.push(chuck);
     }).on('end', function() {
-      console.log(results);
-      response.writeHead(statusCode, headers);
-      var responseBody = {
-        headers: headers,
-        method: method,
-        url: url,
-        results: results
-      };
-      response.end(JSON.stringify(responseBody));
+      results = Buffer.concat(results).toString();
     });
 
-  } else {
-    response.statusCode = 404;
-    response.end('error');
   }
+
+  repsonse.on('error', function(err) {
+    console.error(err);
+  });
+
+  reponse.statusCode = 200;
+  response.setHeader('Content-Type', 'application/json');
+
+  var responseBody = {
+    headers: headers, 
+    method: request.method,
+    url: request.url,
+    body: results
+  };
+
+  response.wrtie(JSON.stringify(responseBody));
+  response.end();
+
+};
+
+
+
+  
+// These headers will allow Cross-Origin Resource Sharing (CORS).
+// This code allows this server to talk to websites that
+// are on different domains, for instance, your chat client.
+//
+// Your chat client is running from a url like file://your/chat/client/index.html,
+// which is considered a different domain.
+//
+// Another way to get around this restriction is to serve you chat
+// client from this domain by setting up static file serving.
+
+exports.requestHandler = requestHandler;
+//   request.setEncoding('utf8');
+  //   request.on('data', function(data) {
+  //     console.log(data);
+  //     results.push(data);
+  //     // response.end(JSON.stringify(data));
+
+  //   // }).on('end', function() {
+  //     console.log(results);
+  //     response.writeHead(statusCode, headers);
+  //     var responseBody = {
+  //       headers: headers,
+  //       method: method,
+  //       url: url,
+  //       results: results
+  //     };
+  //     response.end(JSON.stringify(responseBody));
+  //   });
+
+  // } 
+
+  // else if (request.method === 'POST' && request.url === '/send'){
+  //   request.on('data', function(data) {
+
+  //     response.end('data received!')
+  //   })
+  // } 
+
+  // else {
+  //   response.statusCode = 404;
+  //   response.end('error');
+  // }
 
   // var postData = querystring.stringify({
   //   'msg' : 'Hello World!'
@@ -144,19 +203,3 @@ var requestHandler = function(request, response) {
   //   res.writeHead(statusCode, headers);
   //   res.end('Got Post Data');
   // });
-};
-
-
-
-// These headers will allow Cross-Origin Resource Sharing (CORS).
-// This code allows this server to talk to websites that
-// are on different domains, for instance, your chat client.
-//
-// Your chat client is running from a url like file://your/chat/client/index.html,
-// which is considered a different domain.
-//
-// Another way to get around this restriction is to serve you chat
-// client from this domain by setting up static file serving.
-
-exports.requestHandler = requestHandler;
-
